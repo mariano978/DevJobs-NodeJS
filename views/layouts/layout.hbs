@@ -38,13 +38,21 @@
       {{/if}}
 
       {{#if boton}}
-        <a href="/vacantes/nueva" class="btn btn-azul">Publicar nueva Vacante</a>
+        <a href="/vacantes/crear" class="btn btn-azul">Publicar nueva Vacante</a>
       {{/if}}
     </header>
 
-    <div class="contenedor contenido-principal">  
+    <div class="contenedor contenido-principal">
       {{{body}}}
     </div>
 
   </body>
 </html>
+
+{{#if trixScript}}
+  <script src="/js/trix.min.js"></script>
+{{/if}}
+
+{{#if vacantesFormScript}}
+  <script src="/js/vacantesForm.min.js"></script>
+{{/if}}

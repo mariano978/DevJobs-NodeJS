@@ -12,4 +12,4 @@ mongoose
     console.error("Error al conectar a MongoDB Atlas:", error);
   });
 
-require("../models/Vacantes.js");
+require("../models/Vacante.js");

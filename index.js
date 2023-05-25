@@ -9,13 +9,22 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 require("dotenv").config();
+const bodyParser = require("body-parser");
 
 //routes
-const crudVacantesRoutes = require("./routes/crudVacantesRoutes.js");
+const vacantesRoutes = require("./routes/vacantesRoutes.js");
 const indexRoutes = require("./routes/indexRoutes.js");
 
 //init express
 const app = express();
+
+app.use(
+  express.urlencoded({
+    extended: true,
+  })
+);
+
+app.use(express.json());
 
 //habilitar handlebar cono tempalte engine (analogo a pug)
 app.engine(
@@ -23,6 +32,8 @@ app.engine(
   exphbs.engine({
     defaultLayout: "layout",
     extname: "hbs",
+    partialsDir: path.join(__dirname, "views/partials"),
+    helpers: require("./helpers/handlebars.js"),
   })
 );
 
@@ -48,6 +59,6 @@ app.use(
 
 //set router
 app.use("/", indexRoutes);
-app.use("/vacantes", crudVacantesRoutes);
+app.use("/vacantes", vacantesRoutes);
 
 app.listen(process.env.PORT);

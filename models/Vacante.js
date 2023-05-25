@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const slug = require("slug");
 const shortid = require("shortid");
 
-const vacantesSchema = new mongoose.Schema({
+const vacanteSchema = new mongoose.Schema({
   titulo: {
     type: String,
     required: "El nombre de la vacante es obligatorio",
@@ -44,10 +44,11 @@ const vacantesSchema = new mongoose.Schema({
   ],
 });
 
-vacantesSchema.pre("save", (next) => {
+vacanteSchema.pre("save", function (next) {
+  console.log(this.titulo);
   const url = slug(this.titulo);
   this.url = `${url}-${shortid.generate()}`;
   next();
 });
 
-module.exports = mongoose.model("Vacante", vacantesSchema);
+module.exports = mongoose.model("Vacante", vacanteSchema);
