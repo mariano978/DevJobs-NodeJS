@@ -1,17 +1,17 @@
 const Vacante = require("../models/Vacante.js");
 
-mostrarTrabajos = async (req, res) => {
-  const vacantes = await Vacante.find();
-  console.log(vacantes);
+paginaPrincipal = async (req, res) => {
+  const vacantesPlainObject = await Vacante.find().lean();
+
   res.render("index", {
     nombrePagina: "DevJobs",
     tagline: "Encuentra y publica trabajos para Desarrolladores Web",
     barra: true,
     boton: true,
-    vacantes,
+    vacantes: vacantesPlainObject,
   });
 };
 
 module.exports = {
-  mostrarTrabajos,
+  paginaPrincipal,
 };

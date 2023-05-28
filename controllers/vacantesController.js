@@ -23,7 +23,49 @@ crear = async (req, res) => {
   res.redirect(`/vacantes/${vacante.url}`);
 };
 
+formularioEditar = async (req, res) => {
+  const { url: vacanteURL } = req.params;
+  const vacante = await getVacante(vacanteURL);
+
+  if (!vacante) {
+    res.redirect("/");
+  }
+
+  res.render("vacantes/crud/editar", {
+    nombrePagina: "Editar Vacante",
+    tagLine: "Llena el formulario y guarda la vacante",
+    trixScript: true,
+    vacantesFormScript: true,
+    vacante,
+  });
+};
+
+editar = (req, res) => {};
+
+mostrarByURL = async (req, res, next) => {
+  const { url: vacanteURL } = req.params;
+  const vacante = await getVacante(vacanteURL);
+
+  if (!vacante) {
+    res.redirect("/");
+  }
+
+  res.render("vacantes/crud/mostrar", {
+    vacante,
+    nombrePagina: vacante.titulo,
+    barra: true,
+  });
+};
+
+async function getVacante(url) {
+  const vacantePlainObject = await Vacante.findOne({ url }).lean();
+  return vacantePlainObject;
+}
+
 module.exports = {
   formularioCrear,
   crear,
+  formularioEditar,
+  editar,
+  mostrarByURL,
 };

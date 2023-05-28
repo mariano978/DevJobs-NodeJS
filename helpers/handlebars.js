@@ -32,12 +32,12 @@ const seleccionarSkills = (seleccionadas = [], opciones) => {
   let html = "";
 
   skills.forEach((skill) => {
-    html += `
-    <li>${skill}</li>
-    `;
+    html += `<li ${
+      seleccionadas.includes(skill) ? 'class="activo"' : ""
+    }  >${skill}</li>`;
   });
 
-  return (opciones.fn().html = html);
+  return html;
 };
 
 module.exports = {

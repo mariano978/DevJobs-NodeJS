@@ -31,16 +31,18 @@
       {{/if}}
     </div>
 
-    <header class="site-header contenedor separador">
-      <h2>{{nombrePagina}}</h2>
-      {{#if tagLine}}
-        <p class="tagline">{{tagLine}}</p>
-      {{/if}}
+    {{#if nombrePagina}}
+      <header class="site-header contenedor separador">
+        <h2>{{nombrePagina}}</h2>
+        {{#if tagLine}}
+          <p class="tagline">{{tagLine}}</p>
+        {{/if}}
 
-      {{#if boton}}
-        <a href="/vacantes/crear" class="btn btn-azul">Publicar nueva Vacante</a>
-      {{/if}}
-    </header>
+        {{#if boton}}
+          <a href="/vacantes/crear" class="btn btn-azul">Publicar nueva Vacante</a>
+        {{/if}}
+      </header> 
+    {{/if}}
 
     <div class="contenedor contenido-principal">
       {{{body}}}

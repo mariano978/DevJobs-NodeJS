@@ -34,8 +34,6 @@ h3 {
     margin: 0 auto;
 }
 .separador {
-    padding-bottom: 2rem;
-    padding-top:2rem;
     border-bottom: 1px solid #272727;
 }
 /** Botones **/
@@ -50,6 +48,7 @@ h3 {
     transition: background-color .3s ease-out;
     display: block;
     border:none;
+    width: fit-content;
 }
 .btn-verde {
     background-color: #00C897;
@@ -86,17 +85,17 @@ h3 {
     color: #ffffff;
     margin: 2rem 0 3rem 0;
 }
-
-
 .site-header {
-    min-height: 400px;
+    min-height: 35rem;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: flex-start;
-    margin-bottom: 5rem;
+    
 }
-
+.text-white{
+   color:white;
+}
 .nombre-sitio {
     display: flex;
     justify-content: space-between;
@@ -104,6 +103,8 @@ h3 {
 .nombre-sitio a {
     color: white;
     text-decoration: none;
+    font-size: 5rem;
+    font-weight: 900;
 }
 .buscador {
     padding-top: 1rem;
