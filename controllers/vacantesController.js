@@ -20,6 +20,13 @@ crear = async (req, res) => {
 
   const vacante = await vacanteInstance.save();
 
+  if (vacante) {
+    console.log("Documento creado con éxito");
+  } else {
+    console.error("Error al crear el documento");
+    return res.redirect("/");
+  }
+
   res.redirect(`/vacantes/${vacante.url}`);
 };
 
@@ -28,7 +35,7 @@ formularioEditar = async (req, res) => {
   const vacante = await getVacante(vacanteURL);
 
   if (!vacante) {
-    res.redirect("/");
+    return res.redirect("/");
   }
 
   res.render("vacantes/crud/editar", {
@@ -40,14 +47,35 @@ formularioEditar = async (req, res) => {
   });
 };
 
-editar = (req, res) => {};
+editar = async (req, res) => {
+  const datosNuevos = req.body;
+  datosNuevos.skills = datosNuevos.skills.split(",");
+  const { url: vacanteURL } = req.params;
+
+  const vacanteActualizada = await Vacante.findOneAndUpdate(
+    { url: vacanteURL },
+    datosNuevos,
+    {
+      new: true,
+    }
+  );
+
+  if (vacanteActualizada) {
+    console.log("Documento actualizado con éxito");
+  } else {
+    console.error("Error al actualizar el documento");
+    return res.redirect("/");
+  }
+
+  res.redirect(`/vacantes/${vacanteActualizada.url}`);
+};
 
 mostrarByURL = async (req, res, next) => {
   const { url: vacanteURL } = req.params;
   const vacante = await getVacante(vacanteURL);
 
   if (!vacante) {
-    res.redirect("/");
+    return res.redirect("/");
   }
 
   res.render("vacantes/crud/mostrar", {

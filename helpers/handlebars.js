@@ -1,4 +1,4 @@
-const seleccionarSkills = (seleccionadas = [], opciones) => {
+const seleccionarSkills = (seleccionadas = []) => {
   const skills = [
     "HTML5",
     "CSS3",
@@ -40,6 +40,23 @@ const seleccionarSkills = (seleccionadas = [], opciones) => {
   return html;
 };
 
+const tipoContrato = (seleccionado, opciones) => {
+  let contenidoHelper = opciones.fn(this);
+
+  contenidoHelper = contenidoHelper.replace(
+    ` value="${seleccionado}"`,
+    "$& selected"
+  );
+
+  contenidoHelper = contenidoHelper.replace(
+    "<option disabled selected>--Selecciona--</option>",
+    "<option disabled>--Selecciona--</option>"
+  );
+
+  return contenidoHelper;
+};
+
 module.exports = {
   seleccionarSkills,
+  tipoContrato,
 };

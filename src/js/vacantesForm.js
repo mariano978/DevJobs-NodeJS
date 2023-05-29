@@ -5,6 +5,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (ul_skills) {
     ul_skills.addEventListener("click", toggleSkill);
+    selectedSkills();
   }
 });
 
@@ -32,6 +33,22 @@ const toggleSkill = (event) => {
   }
 
   const inputHiddenSkills = document.querySelector("#skills");
+
+  const skillsListArray = [...skillsList];
+
+  inputHiddenSkills.value = skillsListArray;
+};
+
+const selectedSkills = (ul_skills) => {
+  const skillsSelected = Array.from(
+    document.querySelectorAll(".lista-conocimientos .activo")
+  );
+
+  const inputHiddenSkills = document.querySelector("#skills");
+
+  skillsSelected.forEach((skill) => {
+    skillsList.add(skill.textContent);
+  });
 
   const skillsListArray = [...skillsList];
 

@@ -27,12 +27,15 @@
 <div class="campo">
   <label>Contrato</label>
   <select name="contrato">
-    <option disabled selected>--Selecciona--</option>
-    <option value="Freelance">Freelance</option>
-    <option value="Tiempo Completo">Tiempo Completo</option>
-    <option value="Medio tiempo">Medio tiempo</option>
-    <option value="Por proyecto">Por proyecto</option>
+    {{#tipoContrato vacante.contrato}}
+      <option disabled selected>--Selecciona--</option>
+      <option value="Freelance">Freelance</option>
+      <option value="Tiempo Completo">Tiempo Completo</option>
+      <option value="Medio tiempo">Medio tiempo</option>
+      <option value="Por proyecto">Por proyecto</option>
+    {{/tipoContrato}}
   </select>
+    
 
 </div>
 
@@ -48,11 +51,10 @@
 
 <ul class="lista-conocimientos">
   {{#if vacante.skills}}
-  {{#seleccionarSkills vacante.skills}}{{/seleccionarSkills}}
+    {{#seleccionarSkills vacante.skills}}{{/seleccionarSkills}}
   {{else}}
-  {{#seleccionarSkills null}}{{/seleccionarSkills}}
+    {{#seleccionarSkills null}}{{/seleccionarSkills}}
   {{/if}}
-
 </ul>
 
 <div class="campo centrar-horizontal">
