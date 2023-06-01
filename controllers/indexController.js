@@ -12,6 +12,15 @@ paginaPrincipal = async (req, res) => {
   });
 };
 
+buscarTermino = async (req, res) => {
+  const { termino } = req.body;
+  const vacantes = await Vacante.find({
+    titulo: { $regex: termino, $options: "i" },
+  }).limit(4);
+  return res.json({ vacantes });
+};
+
 module.exports = {
   paginaPrincipal,
+  buscarTermino,
 };

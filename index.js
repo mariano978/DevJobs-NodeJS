@@ -14,6 +14,7 @@ const bodyParser = require("body-parser");
 //routes
 const vacantesRoutes = require("./routes/vacantesRoutes.js");
 const indexRoutes = require("./routes/indexRoutes.js");
+const usuarioRoutes = require("./routes/usuarioRoutes.js");
 
 //init express
 const app = express();
@@ -60,5 +61,6 @@ app.use(
 //set router
 app.use("/", indexRoutes);
 app.use("/vacantes", vacantesRoutes);
+app.use("/", usuarioRoutes);
 
 app.listen(process.env.PORT);
