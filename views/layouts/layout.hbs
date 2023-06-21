@@ -1,82 +1,80 @@
 <html lang="en">
 
-<head>
-  <meta charset="UTF-8" />
-  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;500;700&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="/css/app.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;500;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/css/app.css" />
 
-  <title>{{nombrePagina}}</title>
+    <title>{{nombrePagina}}</title>
 
-</head>
+  </head>
 
-<body>
-
-  <div class="busqueda-mobile">
-
-  </div>
-
-  <div class="nombre-sitio contenedor">
-    <a href="/">devJobs</a>
+  <body>
 
     {{#if barra}}
-    <div class="buscador">
-      <div class="barra">
-        <input type="text" class="buscar" />
-        <div class="controles-buscador">
-          <button id="lupa"></button>
-          <button id="quit"></button>
-        </div>
-
+      <div class="busqueda-mobile">
+        {{! aqui se insertan elementos }}
       </div>
+    {{/if}}
 
-      <ul class="caja-busqueda">
-        <li class="resultado-busqueda">
-          <div class="resultado-izquierda">
-            <h3 class="resultado-empresa">Empresa</h3>
-            <p class="resultado-texto">Elemento</p>
+    <div class="nombre-sitio contenedor">
+      <a href="/">devJobs</a>
+
+      {{#if barra}}
+        <div class="buscador">
+          <div class="barra">
+            <input type="text" class="buscar" />
+            <div class="controles-buscador">
+              <button id="lupa"></button>
+              <button id="quit"></button>
+            </div>
           </div>
-          <a href="/vacantes" class="btn btn-verde">Más Info.</a>
-        </li>
-      </ul>
 
+          <ul class="caja-busqueda">
+            {{! aqui se insertan elementos }}
+          </ul>
+
+        </div>
+      {{/if}}
     </div>
+
+    {{#if nombrePagina}}
+      <header class="site-header contenedor separador">
+        <h2>{{nombrePagina}}</h2>
+        {{#if tagLine}}
+          <p class="tagline">{{tagLine}}</p>
+        {{/if}}
+
+        {{#if boton}}
+          <a href="/vacantes/crear" class="btn btn-azul">Publicar nueva Vacante</a>
+        {{/if}}
+      </header>
     {{/if}}
-  </div>
 
-  {{#if nombrePagina}}
-  <header class="site-header contenedor separador">
-    <h2>{{nombrePagina}}</h2>
-    {{#if tagLine}}
-    <p class="tagline">{{tagLine}}</p>
-    {{/if}}
+    <div class="contenedor contenido-principal">
+      {{{body}}}
+    </div>
 
-    {{#if boton}}
-    <a href="/vacantes/crear" class="btn btn-azul">Publicar nueva Vacante</a>
-    {{/if}}
-  </header>
-  {{/if}}
-
-  <div class="contenedor contenido-principal">
-    {{{body}}}
-  </div>
-
-</body>
+  </body>
 
 </html>
 
 {{#if trixScript}}
-<script src="/js/trix.min.js"></script>
+  <script src="/js/trix.min.js"></script>
 {{/if}}
 
 {{#if vacantesFormScript}}
-<script src="/js/vacantesForm.min.js"></script>
+  <script src="/js/vacantesForm.min.js"></script>
 {{/if}}
 
 {{#if barra}}
-<script src="/js/buscador.min.js"></script>
+  <script src="/js/buscador.min.js"></script>
 {{/if}}
