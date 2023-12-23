@@ -358,6 +358,11 @@ trix-toolbar .trix-button--icon-strike {
 .default-form .acciones {
     display: flex;
     justify-content: space-between;
+    margin-top: 2rem;
+}
+
+.default-form a:hover{
+   color: #cfcdd7;
 }
 
 .default-form a {
@@ -662,7 +667,7 @@ p.candidatos {
         width: 90%;
     }
     .resultado-busqueda{
-      position: absolute;
+      position: relative;
         top: 8rem;
         width: 90%;
         left: 50%;
@@ -677,6 +682,7 @@ p.candidatos {
     width: 100%;
     display: none;
 }
+
 
 #quit {
     transform: scale(.9);

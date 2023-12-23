@@ -60,6 +60,13 @@
     {{/if}}
 
     <div class="contenedor contenido-principal">
+      {{#if mensajes}}
+        <div class="alertas">
+          {{#mostrarAlertas mensajes}}
+            {{! Lo que va aca adentro es lo que se pasa como ultimo parametro, en este caso iria a parar a "alertas" y se accede con "alertas.fn()" }}
+          {{/mostrarAlertas}}
+        </div>
+      {{/if}}
       {{{body}}}
     </div>
 

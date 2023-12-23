@@ -56,7 +56,24 @@ const tipoContrato = (seleccionado, opciones) => {
   return contenidoHelper;
 };
 
+const mostrarAlertas = (messages = {}, alertas) => {
+  const msgTypes = Object.keys(messages); //error, correcto...
+  let msgHtml = "";
+  if (msgTypes.lenght !== 0) {
+    msgTypes.forEach((msgType) => {
+      const messagesThisType = messages[msgType]; //Aca tenemos los mensajes de alguno de los tipos (ej. errores)
+      messagesThisType.forEach((message) => {
+        msgHtml += `<div class="${msgType}">${message}</div>`;
+      });
+    });
+  }
+
+  //Iyectamos HTML
+  return (alertas.fn().html = msgHtml);
+};
+
 module.exports = {
   seleccionarSkills,
   tipoContrato,
+  mostrarAlertas,
 };

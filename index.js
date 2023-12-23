@@ -1,5 +1,4 @@
 //database
-const mongoose = require("mongoose");
 require("./config/db.js");
 const MongoStore = require("connect-mongo");
 
@@ -9,7 +8,7 @@ const path = require("path");
 const cookieParser = require("cookie-parser");
 const session = require("express-session");
 require("dotenv").config();
-const bodyParser = require("body-parser");
+const flash = require("connect-flash");
 
 //routes
 const vacantesRoutes = require("./routes/vacantesRoutes.js");
@@ -57,6 +56,14 @@ app.use(
     }),
   })
 );
+
+//Alertas y flash menssages
+app.use(flash());
+//midelware
+// app.use((req, res, next) => {
+//   res.locals.mensajes = req.flash();
+//   next();
+// });
 
 //set router
 app.use("/", indexRoutes);

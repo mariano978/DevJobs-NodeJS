@@ -9,7 +9,5 @@ mongoose
     console.log("Conexión exitosa a MongoDB Atlas :D");
   })
   .catch((error) => {
-    console.error("Error al conectar a MongoDB Atlas:", error);
+    console.error("Error al conectar a MongoDB Atlas >:(", error);
   });
-
-require("../models/Vacante.js");
