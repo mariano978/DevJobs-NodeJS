@@ -30,4 +30,19 @@ usuarioSchema.pre("save", async function (next) {
   next();
 });
 
+usuarioSchema.post("save", function (error, doc, next) {
+  if (error.name === "MongoServerError" && error.code === 11000) {
+    next("Este correo ya esta registrado");
+  } else {
+    next(error);
+  }
+});
+
+//Autenticar Usuario, agregando un metodo al modelo de Usuario
+usuarioSchema.method = {
+  comparePassword: function (password) {
+    return bcrypt.compareSync(password, this.password);
+  },
+};
+
 module.exports = mongoose.model("Usuario", usuarioSchema);

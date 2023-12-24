@@ -1,0 +1,23 @@
+<main class="contenedor">
+  <form action="/login" method="POST" class="default-form">
+
+    <div class="campo">
+      <label for="email">Email</label>
+      <input type="email" name="email" placeholder="Tu email..." />
+    </div>
+    <div class="campo">
+      <label for="password">Password</label>
+      <input
+        type="password"
+        name="password"
+        placeholder="Entre 6 y 12 caracteres"
+      />
+    </div>
+
+    <input type="submit" value="Iniciar Sesión" class="btn btn-azul" />
+    <div class="acciones">
+      <a href="/register">No tienes cuenta ?, registrate.</a>
+      <a href="/reset-password">Olvidate tu password ?, click aqui.</a>
+    </div>
+  </form>
+</main>

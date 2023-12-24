@@ -6,6 +6,7 @@ module.exports = {
     trix: "./src/js/trix.js",
     vacantesForm: "./src/js/vacantesForm.js",
     buscador: "./src/js/buscador.js",
+    cleanAlerts: "./src/js/cleanAlerts.js",
   },
   output: {
     path: path.resolve(__dirname, "public/js"),

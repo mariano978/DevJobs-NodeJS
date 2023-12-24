@@ -1,5 +1,6 @@
 //database
 require("./config/db.js");
+
 const MongoStore = require("connect-mongo");
 
 const express = require("express");
@@ -9,6 +10,8 @@ const cookieParser = require("cookie-parser");
 const session = require("express-session");
 require("dotenv").config();
 const flash = require("connect-flash");
+//passport
+const passport = require("./config/passport.js");
 
 //routes
 const vacantesRoutes = require("./routes/vacantesRoutes.js");
@@ -56,8 +59,16 @@ app.use(
     }),
   })
 );
+//inicializar passport
+app.use(passport.initialize());
+app.use(passport.session());
 
 //Alertas y flash menssages
+//Flash esta diseñado para redirecciones
+//se diseñó específicamente para situaciones como redirecciones,
+//donde deseas mostrar un mensaje en la próxima solicitud.
+//por ende al redireccionar req.flash() otorgará
+//los mensajes que generó la solicitud anterior
 app.use(flash());
 //midelware
 // app.use((req, res, next) => {

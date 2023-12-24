@@ -57,17 +57,19 @@ const tipoContrato = (seleccionado, opciones) => {
 };
 
 const mostrarAlertas = (messages = {}, alertas) => {
+  if (messages.lenght === 0) {
+    return;
+  }
   const msgTypes = Object.keys(messages); //error, correcto...
   let msgHtml = "";
-  if (msgTypes.lenght !== 0) {
+  if (msgTypes) {
     msgTypes.forEach((msgType) => {
       const messagesThisType = messages[msgType]; //Aca tenemos los mensajes de alguno de los tipos (ej. errores)
       messagesThisType.forEach((message) => {
-        msgHtml += `<div class="${msgType}">${message}</div>`;
+        msgHtml += `<div class="alerta ${msgType}">${message}</div>`;
       });
     });
   }
-
   //Iyectamos HTML
   return (alertas.fn().html = msgHtml);
 };
