@@ -39,7 +39,7 @@ usuarioSchema.post("save", function (error, doc, next) {
 });
 
 //Autenticar Usuario, agregando un metodo al modelo de Usuario
-usuarioSchema.method = {
+usuarioSchema.methods = {
   comparePassword: function (password) {
     return bcrypt.compareSync(password, this.password);
   },

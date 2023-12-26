@@ -1,30 +1,32 @@
 const Usuario = require("../models/Usuario.js");
 const passport = require("passport");
-const LocalStrategy = require('passport-local').Strategy;
+const LocalStrategy = require("passport-local").Strategy;
 
 //Configuro la estrategia local que usará passport
 
 //Por defecto, LocalStrategy espera que el nombre de
 //usuario se encuentre en el campo llamado "username" en la solicitud.
 passport.use(
-  {
-    usernameField: "email", // Usar 'email' en lugar de 'username'
-    passwordField: "password",
-  },
-  new LocalStrategy(async (email, password, done) => {
-    try {
-      const usuario = await Usuario.findOne({ email });
-      if (!usuario) {
-        return done(null, false, { message: "Nombre de usuario incorrecto" });
+  new LocalStrategy(
+    {
+      usernameField: "email", // Usar 'email' en lugar de 'username'
+      passwordField: "password",
+    },
+    async (email, password, done) => {
+      try {
+        const usuario = await Usuario.findOne({ email });
+        if (!usuario) {
+          return done(null, false, { message: "Nombre de usuario incorrecto" });
+        }
+        if (!usuario.comparePassword(password)) {
+          return done(null, false, { message: "Contraseña incorrecta" });
+        }
+        return done(null, usuario);
+      } catch (err) {
+        return done(err);
       }
-      if (!usuario.comparePassword(password)) {
-        return done(null, false, { message: "Contraseña incorrecta" });
-      }
-      return done(null, usuario);
-    } catch (err) {
-      return done(err);
     }
-  })
+  )
 );
 
 //Determinamos 'QUE' informacion del usuario se almacena en la sesion (en este caso el id)

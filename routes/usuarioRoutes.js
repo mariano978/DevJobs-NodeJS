@@ -17,3 +17,4 @@ router.get("/login", formLogin);
 router.post("/login", authenticateUser);
 
 module.exports = router;
+
