@@ -15,6 +15,6 @@ document.addEventListener("DOMContentLoaded", () => {
   };
 
   if (alertas) {
-    //limpiarAlertas();
+    limpiarAlertas();
   }
 });

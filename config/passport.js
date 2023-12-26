@@ -15,12 +15,18 @@ passport.use(
     async (email, password, done) => {
       try {
         const usuario = await Usuario.findOne({ email });
+
         if (!usuario) {
-          return done(null, false, { message: "Nombre de usuario incorrecto" });
+          return done(null, false, { message: "Usuario incorrecto" });
         }
+
         if (!usuario.comparePassword(password)) {
           return done(null, false, { message: "Contraseña incorrecta" });
         }
+        //Antes de iniciar una nueva sesion cerramos la actual
+        req.logout();
+
+        //Si el usuario existe y el password es correcto le pasamos el usuario
         return done(null, usuario);
       } catch (err) {
         return done(err);
@@ -37,7 +43,8 @@ passport.serializeUser((usuario, done) => done(null, usuario._id));
 //en cada solicitud quien es el usuario, ahorrandome el trabajo
 passport.deserializeUser(async (id, done) => {
   try {
-    const usuario = await Usuario.findById(id);
+    const usuario = await Usuario.findById(id).select("-password");
+    console.log(usuario);
     return done(null, usuario);
   } catch (err) {
     return done(err);
