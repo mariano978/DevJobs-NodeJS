@@ -14,6 +14,7 @@ passport.use(
     },
     async (email, password, done) => {
       try {
+        //intentamos buscar el usuario sin el campo del password
         const usuario = await Usuario.findOne({ email });
 
         if (!usuario) {
@@ -23,8 +24,6 @@ passport.use(
         if (!usuario.comparePassword(password)) {
           return done(null, false, { message: "Contraseña incorrecta" });
         }
-        //Antes de iniciar una nueva sesion cerramos la actual
-        req.logout();
 
         //Si el usuario existe y el password es correcto le pasamos el usuario
         return done(null, usuario);
@@ -44,7 +43,7 @@ passport.serializeUser((usuario, done) => done(null, usuario._id));
 passport.deserializeUser(async (id, done) => {
   try {
     const usuario = await Usuario.findById(id).select("-password");
-    console.log(usuario);
+    console.log("Usuario Deserialize: ", usuario);
     return done(null, usuario);
   } catch (err) {
     return done(err);

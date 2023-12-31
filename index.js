@@ -50,8 +50,8 @@ app.use(cookieParser());
 
 app.use(
   session({
-    secret: process.env.SECRETO,
-    key: process.env.KEY,
+    secret: process.env.SESSION_SECRET,
+    key: process.env.SESSION_KEY,
     resave: false,
     saveUninitialized: false,
     store: new MongoStore({

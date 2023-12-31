@@ -51,4 +51,4 @@ vacanteSchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Vacante", vacanteSchema);
+module.exports = mongoose.model("Vacante", vacanteSchema,"vacantes");

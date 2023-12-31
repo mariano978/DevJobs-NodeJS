@@ -8,11 +8,15 @@ const {
   mostrarByURL,
 } = require("../controllers/vacantesController.js");
 
+const { userIsAuthenticated } = require("../controllers/usuarioController.js");
+
 //CRUD
-router.get("/crear", formularioCrear);
-router.post("/crear", crear);
-router.get("/editar/:url", formularioEditar);
-router.post("/editar/:url",editar);
+router.get("/crear", userIsAuthenticated, formularioCrear);
+router.post("/crear", userIsAuthenticated, crear);
+router.get("/editar/:url", userIsAuthenticated, formularioEditar);
+router.post("/editar/:url", userIsAuthenticated, editar);
+
+//Publico, cualquiera puede ver las vacantes
 router.get("/:url", mostrarByURL);
 
 module.exports = router;
