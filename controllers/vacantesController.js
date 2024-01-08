@@ -13,6 +13,9 @@ crear = async (req, res) => {
   const datosVacante = req.body;
   const vacanteInstance = new Vacante(datosVacante);
 
+  //agregamos la referencia del creador de la vacante
+  vacanteInstance.usuario_id = req.user._id;
+  
   //convertimos las skills a arreglo
   vacanteInstance.skills = datosVacante.skills.split(",");
 

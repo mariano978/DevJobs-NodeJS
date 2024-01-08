@@ -11,6 +11,8 @@
       href="https://fonts.googleapis.com/css2?family=Inconsolata:wght@200;500;700&display=swap"
       rel="stylesheet"
     />
+
+    <link rel="stylesheet" href="/icons/style.css" />
     <link rel="stylesheet" href="/css/app.css" />
 
     <title>{{nombrePagina}}</title>
@@ -42,6 +44,12 @@
             {{! aqui se insertan elementos }}
           </ul>
 
+        </div>
+      {{/if}}
+      {{#if cerrarSesion}}
+        <div class="cerrar-sesion">
+          <a href="/dashboard">Administracion</a>
+          <a href="/logout">Cerrar Sesión</a>
         </div>
       {{/if}}
     </div>

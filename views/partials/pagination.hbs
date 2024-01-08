@@ -1,0 +1,34 @@
+<div class="paginacion">
+  <div class="botones-paginacion">
+    {{#if paginateData.hasPrevPage}}
+      <a
+        href="/dashboard?page={{paginateData.prevPage}}"
+        class="boton-paginacion"
+      ><i class="icon icon-chevron-left"></i></a>
+    {{/if}}
+    {{#if paginateData.hasNextPage}}
+      <a
+        href="/dashboard?page={{paginateData.nextPage}}"
+        class="boton-paginacion"
+      ><i class="icon icon-chevron-right"></i></a>
+    {{/if}}
+  </div>
+  <div class="numero-paginacion">
+    <form action="/dashboard" method="GET">
+      <p>page</p>
+      <input
+        type="number"
+        name="page"
+        min="1"
+        max="{{paginateData.totalPages}}"
+        step="1"
+        value="{{paginateData.page}}"
+      />
+      <p>de {{paginateData.totalPages}}</p>
+      <button type="submit" class="btn btn-azul">
+        <i class="icon icon-paper-plane"></i>
+      </button>
+    </form>
+
+  </div>
+</div>

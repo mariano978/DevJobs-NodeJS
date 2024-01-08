@@ -2,6 +2,7 @@ const { body, validationResult } = require("express-validator");
 //const Vacante = require("../models/Vacante.js");
 const Usuario = require("../models/Usuario.js");
 const passport = require("passport");
+const Vacante = require("../models/Vacante.js");
 
 exports.formRegister = (req, res) => {
   res.render("usuarios/auth/register", {
@@ -75,41 +76,31 @@ exports.formLogin = (req, res) => {
 
 //passport Autenticacion
 exports.authenticateUser = (req, res, next) => {
-  //autenticamos el usuario que intenta iniciar sesion
   passport.authenticate("local", (err, user, info, status) => {
-    //esta funcion es la que le llega como parametro al metodo con el nombre de "done"
     if (user) {
-      //Si se autentica correctamente significa que tenemos definido "user"
-      //establecemos la autenticacion manualmente
       req.logIn(user, (err) => {
         if (err) {
-          req.flash("error", "Ocurrio un error, intentelo mas tarde");
+          req.flash("error", "Ocurrió un error, inténtelo más tarde");
           return res.redirect("/login");
         }
-        console.log("Usuario Logeado:", user);
         return res.redirect("/dashboard");
       });
-    }
-
-    //Caso constrario mostramos los errores con flash
-    if (err) {
-      console.log(err);
-      req.flash("error", "Ocurrio un error, intentelo mas tarde");
-    } else if (status === 400) {
-      //Este error se presenta cuando no se ingresan datos
-      req.flash("error", "Ambos campor requeridos");
     } else {
-      req.flash("error", info.message);
+      if (err) {
+        console.log(err);
+        req.flash("error", "Ocurrió un error, inténtelo más tarde");
+      } else if (status === 400) {
+        req.flash("error", "Ambos campos son requeridos");
+      } else if (info) {
+        req.flash("error", info.message);
+      }
+      return res.redirect("/login");
     }
-
-    res.redirect("/login");
-    return next();
-  })(req, res, next); //Esto le proporciona los parametros que requiere "authenticate"
+  })(req, res, next);
 };
 
 //verifica si el usuario esta autenticado
 exports.userIsAuthenticated = (req, res, next) => {
-  console.log("Usuario autenticado:", req.user);
   if (req.isAuthenticated()) {
     return next();
   }
@@ -119,10 +110,124 @@ exports.userIsAuthenticated = (req, res, next) => {
   return res.redirect("/login");
 };
 
-exports.rederDashboard = (req, res, next) => {
-  res.render("usuarios/dashboard", {
-    nombrePagina: "Panel de Administracion",
-    tagline: "Crea y administra tus vacantes aqui",
+exports.renderDashboard = async (req, res, next) => {
+  try {
+    const page = req.query.page ?? 1;
+    if (page < 1) {
+      res.redirect("/dashboard");
+    }
+    console.log(page);
+
+    const result = await Vacante.paginate(
+      { usuario_id: req.user._id },
+      {
+        page,
+        limit: process.env.PAGINATION_LIMIT,
+      }
+    );
+
+    //Opciones de Mongoose Paginate v2
+    // result.docs
+    // result.totalDocs = 100
+    // result.limit = 10
+    // result.page = 1
+    // result.totalPages = 10
+    // result.hasNextPage = true
+    // result.nextPage = 2
+    // result.hasPrevPage = false
+    // result.prevPage = null
+    // result.pagingCounter = 1
+    console.log(result);
+    res.render("usuarios/dashboard", {
+      nombrePagina: "Panel de Administracion",
+      tagline: "Crea y administra tus vacantes aqui",
+      mensajes: req.flash(),
+      paginateData: JSON.parse(JSON.stringify(result)),
+      cerrarSesion: true,
+    });
+  } catch (err) {
+    console.log(err);
+    req.flash("error", "Lo siento ha ocurrido un error, intente mas tarde");
+    res.redirect("/login");
+    return next();
+  }
+};
+
+exports.formEditProfile = (req, res) => {
+  res.render("usuarios/edit-profile", {
+    nombrePagina: "Edita tu perfil",
+    tagline: "Comienza a publicar tus vacantes gratis !",
     mensajes: req.flash(),
+    usuario: JSON.parse(JSON.stringify(req.user)),
+    cerrarSesion: true,
   });
 };
+
+exports.validateEditProfileData = async function (req, res, next) {
+  const rules = {
+    nombre: body("nombre")
+      .not()
+      .isEmpty()
+      .withMessage("El nombre es obligatorio")
+      .escape(),
+    email: body("email")
+      .isEmail()
+      .withMessage("El email es obligatorio")
+      .normalizeEmail(),
+    password: body("password").escape(),
+  };
+
+  await Promise.all(
+    Object.entries(rules).map(([campo, validation]) => {
+      if (campo === "password" && !req.body.password) {
+        return null;
+      }
+      return validation.run(req);
+    })
+  );
+  const result = validationResult(req);
+  const errores = result.errors;
+  if (errores.length > 0) {
+    req.flash(
+      "error",
+      errores.map((error) => error.msg)
+    );
+
+    return res.redirect("/edit-profile");
+  }
+  //si la validacion es correcta pasamos al siguiente midelware
+  next();
+};
+
+exports.editProfile = (req, res) => {
+  Usuario.findById(req.user._id)
+    .then(async (user) => {
+      user.nombre = req.body.nombre;
+      user.email = req.body.email;
+      if (req.body.password) {
+        user.password = req.body.password;
+      }
+
+      try {
+        await user.save();
+        req.flash("success", "Datos guardados correctamente");
+      } catch (error) {
+        console.log(error);
+        req.flash("error", "Lo siento ha ocurrido un error, intente mas tarde");
+      }
+
+      res.redirect("/dashboard");
+    })
+    .catch((error) => {
+      console.log(error);
+      req.flash("error", "Lo siento ha ocurrido un error, intente mas tarde");
+      res.redirect("/dashboard");
+    });
+};
+
+
+exports.logoutFromUser = (req, res) => {
+ req.logout();
+ 
+ return res.redirect("/login");
+}

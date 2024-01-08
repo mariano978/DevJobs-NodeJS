@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const slug = require("slug");
 const shortid = require("shortid");
+const mongoosePaginate = require('mongoose-paginate-v2');
 
 const vacanteSchema = new mongoose.Schema({
   titulo: {
@@ -42,6 +43,10 @@ const vacanteSchema = new mongoose.Schema({
       cv: String,
     },
   ],
+  usuario_id: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "Usuario",
+  },
 });
 
 vacanteSchema.pre("save", function (next) {
@@ -51,4 +56,6 @@ vacanteSchema.pre("save", function (next) {
   next();
 });
 
-module.exports = mongoose.model("Vacante", vacanteSchema,"vacantes");
+vacanteSchema.plugin(mongoosePaginate);
+
+module.exports = mongoose.model("Vacante", vacanteSchema, "vacantes");

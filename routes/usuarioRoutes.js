@@ -6,8 +6,12 @@ const {
   registerUser,
   formLogin,
   authenticateUser,
-  rederDashboard,
-  userIsAuthenticated
+  renderDashboard,
+  userIsAuthenticated,
+  formEditProfile,
+  validateEditProfileData,
+  editProfile,
+  logoutFromUser
 } = require("../controllers/usuarioController.js");
 const passport = require("passport");
 
@@ -18,16 +22,31 @@ router.post("/register", validateRegisterData, registerUser);
 
 //iniciar sesion
 router.get("/login", formLogin);
-//router.post("/login", authenticateUser);
+router.post("/login", authenticateUser);
 
-router.post('/login', passport.authenticate('local', {
-  successRedirect: '/dashboard',
-  failureRedirect: '/login',
-  failureFlash: true,
-}));
+router.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/dashboard",
+    failureRedirect: "/login",
+    failureFlash: true,
+  })
+);
 
 //Parte privada, aqui debe estar autenticado el usuario 🔒
 //dashboard
-router.get("/dashboard", userIsAuthenticated, rederDashboard);
+router.get("/dashboard", userIsAuthenticated, renderDashboard);
+
+//Editar perfil
+router.get("/edit-profile", userIsAuthenticated, formEditProfile);
+router.post(
+  "/edit-profile",
+  userIsAuthenticated,
+  validateEditProfileData,
+  editProfile
+);
+
+//Cerrar sesion
+router.get("/login", userIsAuthenticated, logoutFromUser);
 
 module.exports = router;
