@@ -2,31 +2,71 @@
 
 <div class="campo">
   <label for="titulo">Titulo</label>
-  <input type="text" name="titulo" placeholder="Ej. NodeJS developer" required {{#if vacante}}
-    value="{{vacante.titulo}}" {{/if}} />
-</div>
-
-<div class="campo">
-  <label for="empresa">Empresa</label>
-  <input type="text" name="empresa" placeholder="Empresa que contrata" required {{#if vacante}}
-    value="{{vacante.empresa}}" {{/if}} />
-</div>
-
-<div class="campo">
-  <label for="ubicacion">Ubicacion</label>
-  <input type="text" name="ubicacion" placeholder="Ej. Argentina, Remoto" required {{#if vacante}}
-    value="{{vacante.ubicacion}}" {{/if}} />
-</div>
-
-<div class="campo">
-  <label for="salario">Salario (USD)</label>
-  <input type="text" name="salario" placeholder="Ej. $500 USD" required {{#if vacante}} value="{{vacante.salario}}"
+  <input type="text" name="titulo" placeholder="Ej. NodeJS developer"  
+    {{#if vacanteFormData}}
+        value="{{vacanteFormData.titulo}}" 
+      {{else}}
+         {{#if vacante}}
+            value="{{vacante.titulo}}" 
+        {{/if}} />
     {{/if}} />
 </div>
 
 <div class="campo">
+  <label for="empresa">Empresa</label>
+  <input type="text" name="empresa" placeholder="Empresa que contrata" 
+     {{#if vacanteFormData}}
+        value="{{vacanteFormData.empresa}}" 
+      {{else}}
+         {{#if vacante}}
+            value="{{vacante.empresa}}" 
+        {{/if}} />
+    {{/if}}
+     />
+</div>
+
+<div class="campo">
+  <label for="ubicacion">Ubicacion</label>
+  <input type="text" name="ubicacion" placeholder="Ej. Argentina, Remoto" 
+     {{#if vacanteFormData}}
+        value="{{vacanteFormData.ubicacion}}" 
+      {{else}}
+         {{#if vacante}}
+            value="{{vacante.ubicacion}}" 
+        {{/if}} />
+    {{/if}}
+    />
+</div>
+
+<div class="campo">
+  <label for="salario">Salario (USD)</label>
+  <input type="text" name="salario" placeholder="Ej. $500 USD"  
+     {{#if vacanteFormData}}
+        value="{{vacanteFormData.salario}}"  
+      {{else}}
+         {{#if vacante}}
+            value="{{vacante.salario}}" 
+        {{/if}} />
+    {{/if}}
+     />
+</div>
+
+<div class="campo">
   <label>Contrato</label>
-  <select name="contrato">
+  <select name="contrato">   
+
+     {{#if vacanteFormData}}
+  
+    {{#tipoContrato vacanteFormData.contrato}}
+      <option disabled selected>--Selecciona--</option>
+      <option value="Freelance">Freelance</option>
+      <option value="Tiempo Completo">Tiempo Completo</option>
+      <option value="Medio tiempo">Medio tiempo</option>
+      <option value="Por proyecto">Por proyecto</option>
+    {{/tipoContrato}}
+      {{else}}
+         {{#if vacante}}
+           
     {{#tipoContrato vacante.contrato}}
       <option disabled selected>--Selecciona--</option>
       <option value="Freelance">Freelance</option>
@@ -34,6 +74,17 @@
       <option value="Medio tiempo">Medio tiempo</option>
       <option value="Por proyecto">Por proyecto</option>
     {{/tipoContrato}}
+
+     {{else}}
+    <option disabled selected>--Selecciona--</option>
+      <option value="Freelance">Freelance</option>
+      <option value="Tiempo Completo">Tiempo Completo</option>
+      <option value="Medio tiempo">Medio tiempo</option>
+      <option value="Por proyecto">Por proyecto</option>
+
+        {{/if}} />
+    {{/if}}
+
   </select>
     
 
@@ -43,18 +94,33 @@
 
 <div class="campo descripcion">
   <label for="descripcion">Descripcion</label>
-  <input type="hidden" id="x" name="descripcion" value="{{vacante.descripcion}}" />
+  <input type="hidden" id="x" name="descripcion"  {{#if vacanteFormData}}
+        value="{{vacanteFormData.descripcion}}" 
+      {{else}}
+         {{#if vacante}}
+            value="{{vacante.descripcion}}" 
+        {{/if}} />
+    {{/if}}/>
   <trix-editor input="x"></trix-editor>
 </div>
 
 <h3>Conocimientos</h3>
 
 <ul class="lista-conocimientos">
-  {{#if vacante.skills}}
-    {{#seleccionarSkills vacante.skills}}{{/seleccionarSkills}}
-  {{else}}
-    {{#seleccionarSkills nada}}{{/seleccionarSkills}}
-  {{/if}}
+
+ {{#if vacanteFormData}}
+      {{#seleccionarSkills vacanteFormData.skills}}{{/seleccionarSkills}}
+      {{else}}
+         {{#if vacante}}
+           {{#seleccionarSkills vacante.skills}}{{/seleccionarSkills}}
+
+           {{else}}
+           
+           {{#seleccionarSkills nada}}{{/seleccionarSkills}}
+        {{/if}}
+    {{/if}}
+
+
 </ul>
 
 <div class="campo centrar-horizontal">

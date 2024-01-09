@@ -14,9 +14,9 @@
           <p class="puesto">{{titulo}}</p>
         </div>
         <div class="centrar-vertical caja">
-          <a href="/candidatos/{{id}}" class="btn btn-amarillo">Candidatos</a>
+          <a href="/candidatos/{{_id}}" class="btn btn-amarillo">Candidatos</a>
           <a href="/vacantes/editar/{{url}}" class="btn btn-verde">Editar</a>
-          <a href="#" data-eliminar="{{id}}" class="btn btn-rojo">Eliminar</a>
+          <a href="#" data-eliminar="{{_id}}" class="btn btn-rojo" id="deleteVacante">Eliminar</a>
         </div>
       </div>
     {{/each}}

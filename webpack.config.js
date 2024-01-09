@@ -7,6 +7,7 @@ module.exports = {
     vacantesForm: "./src/js/vacantesForm.js",
     buscador: "./src/js/buscador.js",
     cleanAlerts: "./src/js/cleanAlerts.js",
+    deleteVacantes: "./src/js/deleteVacantes.js",
   },
   output: {
     path: path.resolve(__dirname, "public/js"),

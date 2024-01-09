@@ -47,6 +47,6 @@ router.post(
 );
 
 //Cerrar sesion
-router.get("/login", userIsAuthenticated, logoutFromUser);
+router.get("/logout", userIsAuthenticated, logoutFromUser);
 
 module.exports = router;

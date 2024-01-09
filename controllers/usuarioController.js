@@ -107,7 +107,7 @@ exports.userIsAuthenticated = (req, res, next) => {
 
   req.flash("error", "Debes iniciar sesion");
 
-  return res.redirect("/login");
+  res.redirect("/login");
 };
 
 exports.renderDashboard = async (req, res, next) => {
@@ -116,7 +116,7 @@ exports.renderDashboard = async (req, res, next) => {
     if (page < 1) {
       res.redirect("/dashboard");
     }
-    console.log(page);
+ 
 
     const result = await Vacante.paginate(
       { usuario_id: req.user._id },
@@ -137,13 +137,13 @@ exports.renderDashboard = async (req, res, next) => {
     // result.hasPrevPage = false
     // result.prevPage = null
     // result.pagingCounter = 1
-    console.log(result);
     res.render("usuarios/dashboard", {
       nombrePagina: "Panel de Administracion",
       tagline: "Crea y administra tus vacantes aqui",
       mensajes: req.flash(),
       paginateData: JSON.parse(JSON.stringify(result)),
       cerrarSesion: true,
+      eliminarVacanteScript: true,
     });
   } catch (err) {
     console.log(err);
@@ -225,9 +225,13 @@ exports.editProfile = (req, res) => {
     });
 };
 
-
 exports.logoutFromUser = (req, res) => {
- req.logout();
- 
- return res.redirect("/login");
-}
+  req.logout(function (err) {
+    if (err) {
+      req.flash("error", "Lo siento ha ocurrido un error, intente mas tarde");
+      return res.redirect("/dashboard");
+    }
+    req.flash("success", "Se ha cerrado sesion");
+    res.redirect("/login");
+  });
+};
