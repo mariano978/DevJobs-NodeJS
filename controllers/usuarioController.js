@@ -4,12 +4,17 @@ const Usuario = require("../models/Usuario.js");
 const passport = require("passport");
 const Vacante = require("../models/Vacante.js");
 
+const { cloneObject } = require("../helpers/functions.js");
+
 //Para manejar archivos con node
 const fs = require("fs");
 const path = require("path");
 //Configurando Multer para subir el avatar
 const multer = require("multer");
 const uploadAvatar = multer({
+  limits: {
+    fileSize: 1000000, //1Mb
+  },
   storage: multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, __dirname + "/../public/uploads/avatars");
@@ -22,13 +27,36 @@ const uploadAvatar = multer({
   fileFilter(req, file, cb) {
     if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
       cb(null, true);
+    } else {
+      cb(new Error("Sube una imagen JPG o PNG"), false);
     }
-    cb(null, false);
-  },
-  limits: {
-    fileSize: 1024 * 1024, //1Mb
   },
 }).single("avatar");
+
+exports.uploadAvatar = (req, res, next) => {
+  uploadAvatar(req, res, function (err) {
+    if (err) {
+      if (err instanceof multer.MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          req.flash("error", "Imagen muy pesada. Máx. 100Kb");
+        } else {
+          req.flash(
+            "error",
+            err.msg
+              ? err.msg
+              : "Lo siento ha ocurrido un error, intente mas tarde"
+          );
+        }
+      } else {
+        req.flash("error", err.message);
+      }
+
+      return res.redirect("/edit-profile");
+    }
+
+    next();
+  });
+};
 
 exports.formRegister = (req, res) => {
   res.render("usuarios/auth/register", {
@@ -168,6 +196,7 @@ exports.renderDashboard = async (req, res, next) => {
       mensajes: req.flash(),
       paginateData: JSON.parse(JSON.stringify(result)),
       cerrarSesion: true,
+      avatar: cloneObject(req.user).avatar,
       eliminarVacanteScript: true,
     });
   } catch (err) {
@@ -185,6 +214,7 @@ exports.formEditProfile = (req, res) => {
     mensajes: req.flash(),
     usuario: JSON.parse(JSON.stringify(req.user)),
     cerrarSesion: true,
+    avatar: cloneObject(req.user).avatar,
   });
 };
 
@@ -235,8 +265,7 @@ removeLastAvatar = (userId, actualFile) => {
   extensiones.forEach((extension) => {
     if (extension !== actualExtension) {
       const rutaArchivo = path.join(
-        directorioAvatars,
-        `${userId}.${extension}`
+        `${directorioAvatars}/${userId}.${extension}`
       );
 
       if (fs.existsSync(rutaArchivo)) {
@@ -256,6 +285,7 @@ exports.editProfile = (req, res) => {
 
       if (req.file) {
         removeLastAvatar(user._id, req.file);
+        user.avatar = req.file.filename;
       }
 
       try {
@@ -283,20 +313,5 @@ exports.logoutFromUser = (req, res) => {
     }
     req.flash("success", "Se ha cerrado sesion");
     res.redirect("/login");
-  });
-};
-
-exports.uploadAvatar = (req, res, next) => {
-  uploadAvatar(req, res, function (err) {
-    if (err) {
-      console.log(err);
-      req.flash(
-        "error",
-        err.msg ? err.msg : "Lo siento ha ocurrido un error, intente mas tarde"
-      );
-      return res.redirect("/edit-profile");
-    }
-
-    next();
   });
 };

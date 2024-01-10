@@ -48,6 +48,9 @@
       {{/if}}
       {{#if cerrarSesion}}
         <div class="cerrar-sesion">
+          {{#if avatar}}
+            <img src="/uploads/avatars/{{avatar}}" alt="avatarUser" class="admin-perfil"/>
+          {{/if}}
           <a href="/dashboard">Administracion</a>
           <a href="/logout">Cerrar Sesión</a>
         </div>
@@ -95,7 +98,6 @@
 {{/if}}
 
 <script src="/js/cleanAlerts.min.js"></script>
-
 
 {{#if eliminarVacanteScript}}
   <script src="/js/deleteVacantes.min.js"></script>

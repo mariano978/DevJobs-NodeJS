@@ -18,6 +18,7 @@ const usuarioSchema = new mongoose.Schema(
     },
     token: String,
     expira: Date,
+    avatar: String,
   },
   { versionKey: false }
 );
