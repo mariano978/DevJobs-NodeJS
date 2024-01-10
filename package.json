@@ -23,12 +23,15 @@
     "express-validator": "^7.0.1",
     "mongoose": "^7.2.0",
     "mongoose-paginate-v2": "^1.7.4",
+    "multer": "^1.4.5-lts.1",
     "passport": "^0.7.0",
     "passport-local": "^1.0.0",
+    "seedrandom": "^3.0.5",
     "shortid": "^2.2.16",
     "slug": "^8.2.2",
     "sweetalert2": "^11.10.2",
-    "trix": "^2.0.5"
+    "trix": "^2.0.5",
+    "uuid": "^9.0.1"
   },
   "devDependencies": {
     "babel-loader": "^9.1.2",

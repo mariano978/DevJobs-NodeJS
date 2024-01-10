@@ -4,6 +4,32 @@ const Usuario = require("../models/Usuario.js");
 const passport = require("passport");
 const Vacante = require("../models/Vacante.js");
 
+//Para manejar archivos con node
+const fs = require("fs");
+const path = require("path");
+//Configurando Multer para subir el avatar
+const multer = require("multer");
+const uploadAvatar = multer({
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, __dirname + "/../public/uploads/avatars");
+    },
+    filename: function (req, file, cb) {
+      const formato = file.mimetype.split("/")[1];
+      cb(null, `${req.user._id}.${formato}`);
+    },
+  }),
+  fileFilter(req, file, cb) {
+    if (file.mimetype === "image/jpeg" || file.mimetype === "image/png") {
+      cb(null, true);
+    }
+    cb(null, false);
+  },
+  limits: {
+    fileSize: 1024 * 1024, //1Mb
+  },
+}).single("avatar");
+
 exports.formRegister = (req, res) => {
   res.render("usuarios/auth/register", {
     nombrePagina: "Crea tu cuenta en DevJobs",
@@ -116,7 +142,6 @@ exports.renderDashboard = async (req, res, next) => {
     if (page < 1) {
       res.redirect("/dashboard");
     }
- 
 
     const result = await Vacante.paginate(
       { usuario_id: req.user._id },
@@ -199,6 +224,27 @@ exports.validateEditProfileData = async function (req, res, next) {
   next();
 };
 
+removeLastAvatar = (userId, actualFile) => {
+  //removemos todos los avatar cuya extension sea distinta a la actual
+  const actualExtension = actualFile.mimetype.split("/")[1];
+  const directorioAvatars = path.join(__dirname, "../public/uploads/avatars");
+
+  // Array de extensiones a verificar
+  const extensiones = ["png", "jpg", "jpeg"];
+
+  extensiones.forEach((extension) => {
+    if (extension !== actualExtension) {
+      const rutaArchivo = path.join(
+        directorioAvatars,
+        `${userId}.${extension}`
+      );
+
+      if (fs.existsSync(rutaArchivo)) {
+        fs.unlinkSync(rutaArchivo);
+      }
+    }
+  });
+};
 exports.editProfile = (req, res) => {
   Usuario.findById(req.user._id)
     .then(async (user) => {
@@ -206,6 +252,10 @@ exports.editProfile = (req, res) => {
       user.email = req.body.email;
       if (req.body.password) {
         user.password = req.body.password;
+      }
+
+      if (req.file) {
+        removeLastAvatar(user._id, req.file);
       }
 
       try {
@@ -233,5 +283,20 @@ exports.logoutFromUser = (req, res) => {
     }
     req.flash("success", "Se ha cerrado sesion");
     res.redirect("/login");
+  });
+};
+
+exports.uploadAvatar = (req, res, next) => {
+  uploadAvatar(req, res, function (err) {
+    if (err) {
+      console.log(err);
+      req.flash(
+        "error",
+        err.msg ? err.msg : "Lo siento ha ocurrido un error, intente mas tarde"
+      );
+      return res.redirect("/edit-profile");
+    }
+
+    next();
   });
 };

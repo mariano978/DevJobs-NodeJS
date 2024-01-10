@@ -11,7 +11,8 @@ const {
   formEditProfile,
   validateEditProfileData,
   editProfile,
-  logoutFromUser
+  logoutFromUser,
+  uploadAvatar,
 } = require("../controllers/usuarioController.js");
 const passport = require("passport");
 
@@ -42,7 +43,8 @@ router.get("/edit-profile", userIsAuthenticated, formEditProfile);
 router.post(
   "/edit-profile",
   userIsAuthenticated,
-  validateEditProfileData,
+  //validateEditProfileData,
+  uploadAvatar,
   editProfile
 );
 

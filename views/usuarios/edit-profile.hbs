@@ -1,5 +1,10 @@
 <main class="contenedor">
-  <form action="/edit-profile" method="POST" class="default-form">
+  <form
+    action="/edit-profile"
+    method="POST"
+    class="default-form"
+    enctype="multipart/form-data"
+  >
     <div class="campo">
       <label for="nombre">Nombre</label>
       <input
@@ -7,7 +12,6 @@
         type="text"
         name="nombre"
         placeholder="Tu nombre"
-        
       />
     </div>
     <div class="campo">
@@ -17,12 +21,19 @@
         type="email"
         name="email"
         placeholder="Tu email"
-        
       />
     </div>
     <div class="campo">
       <label for="password">Password</label>
-      <input type="password" name="password" placeholder="Si no desea cambiarlo deje en blanco" />
+      <input
+        type="password"
+        name="password"
+        placeholder="Si no desea cambiarlo deje en blanco"
+      />
+    </div>
+    <div class="campo">
+      <label for="email">Imagen Perfil</label>
+      <input type="file" name="avatar" />
     </div>
     <div class="campo">
       <input type="submit" class="btn btn-azul" value="Guardar Cambios" />
