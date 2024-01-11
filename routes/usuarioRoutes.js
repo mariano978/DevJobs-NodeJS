@@ -13,6 +13,8 @@ const {
   editProfile,
   logoutFromUser,
   uploadAvatar,
+  formResetPassword,
+  sendEmailToken
 } = require("../controllers/usuarioController.js");
 const passport = require("passport");
 
@@ -24,6 +26,11 @@ router.post("/register", validateRegisterData, registerUser);
 //iniciar sesion
 router.get("/login", formLogin);
 router.post("/login", authenticateUser);
+
+//reset password
+router.get("/reset-password", formResetPassword);
+router.post("/reset-password", sendEmailToken);
+
 
 router.post(
   "/login",

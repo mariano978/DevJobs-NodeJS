@@ -8,6 +8,7 @@ paginaPrincipal = async (req, res) => {
     barra: true,
     boton: true,
     vacantes: vacantesPlainObject,
+    mensajes: req.flash(),
   });
 };
 

@@ -7,7 +7,10 @@ const {
   editar,
   mostrarByURL,
   validateVacante,
-  eliminarVacante
+  eliminarVacante,
+  subirCv,
+  guardarCandidato,
+  mostrarCandidatos
 } = require("../controllers/vacantesController.js");
 
 const { userIsAuthenticated } = require("../controllers/usuarioController.js");
@@ -21,5 +24,6 @@ router.delete("/eliminar/:id", userIsAuthenticated, eliminarVacante);
 
 //Publico, cualquiera puede ver las vacantes
 router.get("/:url", mostrarByURL);
+router.post("/:url", subirCv, guardarCandidato);
 
 module.exports = router;

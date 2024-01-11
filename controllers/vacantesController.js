@@ -1,7 +1,9 @@
 const Vacante = require("../models/Vacante.js");
 const { body, validationResult } = require("express-validator");
-
-formularioCrear = (req, res) => {
+const multer = require("multer");
+const { cloneObject } = require("../helpers/functions.js");
+const shortid = require("shortid");
+exports.formularioCrear = (req, res) => {
   const vacanteFormData = Object.keys(req.body).length > 0 ? req.body : false; //si el body esta vacio le pasamos false
 
   res.render("vacantes/crud/crear", {
@@ -12,10 +14,11 @@ formularioCrear = (req, res) => {
     mensajes: req.flash(),
     vacanteFormData,
     cerrarSesion: true,
+    avatar: cloneObject(req.user).avatar,
   });
 };
 
-crear = async (req, res) => {
+exports.crear = async (req, res) => {
   const datosVacante = req.body;
   const vacanteInstance = new Vacante(datosVacante);
 
@@ -34,11 +37,11 @@ crear = async (req, res) => {
   res.redirect(`/vacantes/${vacante.url}`);
 };
 
-formularioEditar = async (req, res) => {
+exports.formularioEditar = async (req, res) => {
   const vacanteFormData = Object.keys(req.body).length > 0 ? req.body : false; //si el body esta vacio le pasamos false
 
   const { url: vacanteURL } = req.params;
-  const vacante = await getVacante(vacanteURL);
+  const vacante = await Vacante.findOne({ vacanteURL }).lean();
 
   if (!vacante) {
     return res.redirect("/");
@@ -53,10 +56,11 @@ formularioEditar = async (req, res) => {
     mensajes: req.flash(),
     vacanteFormData,
     cerrarSesion: true,
+    avatar: cloneObject(req.user).avatar,
   });
 };
 
-editar = async (req, res) => {
+exports.editar = async (req, res) => {
   const datosNuevos = req.body;
   datosNuevos.skills = datosNuevos.skills.split(",");
   const { url: vacanteURL } = req.params;
@@ -76,27 +80,27 @@ editar = async (req, res) => {
   res.redirect(`/vacantes/${vacanteActualizada.url}`);
 };
 
-mostrarByURL = async (req, res, next) => {
+exports.mostrarByURL = async (req, res, next) => {
   const { url: vacanteURL } = req.params;
-  const vacante = await getVacante(vacanteURL);
+  const vacante = await Vacante.findOne({ url: vacanteURL }).populate(
+    "usuario_id"
+  );
 
   if (!vacante) {
     return res.redirect("/");
   }
 
   res.render("vacantes/crud/mostrar", {
-    vacante,
+    vacante: cloneObject(vacante),
     nombrePagina: vacante.titulo,
     barra: true,
+    editarVacante:
+      vacante.usuario_id._id.toString() === req.user._id.toString(),
+    mensajes: req.flash(),
   });
 };
 
-async function getVacante(url) {
-  const vacantePlainObject = await Vacante.findOne({ url }).lean();
-  return vacantePlainObject;
-}
-
-validateVacante = async (req, res, next) => {
+exports.validateVacante = async (req, res, next) => {
   const rules = [
     body("titulo").not().isEmpty().withMessage("Falta Titulo").escape(),
     body("empresa").not().isEmpty().withMessage("Falta Empresa").escape(),
@@ -130,11 +134,11 @@ validateVacante = async (req, res, next) => {
   next();
 };
 
-verifyVancanteOfTheUser = (vacante, user) => {
+exports.verifyVancanteOfTheUser = (vacante, user) => {
   return vacante.usuario_id.equals(user._id);
 };
 
-eliminarVacante = async (req, res) => {
+exports.eliminarVacante = async (req, res) => {
   try {
     const { id: vacanteId } = req.params;
     const vacante = await Vacante.findById(vacanteId);
@@ -153,12 +157,96 @@ eliminarVacante = async (req, res) => {
   return;
 };
 
-module.exports = {
-  formularioCrear,
-  crear,
-  formularioEditar,
-  editar,
-  mostrarByURL,
-  validateVacante,
-  eliminarVacante,
+const uploadCv = multer({
+  limits: {
+    fileSize: 1000000, //1Mb
+  },
+  storage: multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, __dirname + "/../public/uploads/cvs");
+    },
+    filename: function (req, file, cb) {
+      const formato = file.mimetype.split("/")[1];
+      cb(null, `${req.user.nombre}-${shortid.generate()}.${formato}`);
+    },
+  }),
+  fileFilter(req, file, cb) {
+    if (file.mimetype === "application/pdf") {
+      cb(null, true);
+    } else {
+      cb(new Error("Sube un archivo PDF"), false);
+    }
+  },
+}).single("cv");
+
+exports.subirCv = (req, res, next) => {
+  console.log("subiendoCV");
+  uploadCv(req, res, function (err) {
+    if (err) {
+      if (err instanceof multer.MulterError) {
+        if (err.code === "LIMIT_FILE_SIZE") {
+          req.flash("error", "Archivo muy pesado. Máx. 1Mb");
+        } else {
+          req.flash(
+            "error",
+            err.msg
+              ? err.msg
+              : "Lo siento ha ocurrido un error, intente mas tarde"
+          );
+        }
+      } else {
+        req.flash("error", err.message);
+      }
+      return res.redirect("back");
+    }
+
+    next();
+  });
+};
+exports.guardarCandidato = async (req, res) => {
+  try {
+    const vacante = await Vacante.findOne({ url: req.params.url });
+
+    const candidato = {
+      nombre: req.body.nombre,
+      email: req.body.email,
+      cv: req.file.filename,
+    };
+
+    vacante.candidatos.push(candidato);
+    await vacante.save();
+
+    req.flash("success", "Datos enviados al reclutador");
+    return res.redirect(`/vacantes/${vacante.url}`);
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Lo siento ha ocurrido un error, intente mas tarde");
+    return res.redirect("/");
+  }
+};
+
+exports.mostrarCandidatos = async (req, res) => {
+  console.log("hola");
+  try {
+    const urlVacante = req.params.url;
+    const vacante = await Vacante.findOne({ url: urlVacante });
+
+    if (vacante.usuario_id.toString() !== req.user._id.toString()) {
+      req.flash("error", "Lo siento ha ocurrido un error, intente mas tarde");
+      return res.redirect("/");
+    }
+
+    console.log(vacante);
+    res.render("vacantes/candidatos", {
+      nombrePagina: `Candidatos de ${vacante.titulo}`,
+      mensajes: req.flash(),
+      cerrarSesion: true,
+      avatar: cloneObject(req.user).avatar,
+      candidatos:  cloneObject(vacante.candidatos) ,
+    });
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Lo siento ha ocurrido un error, intente mas tarde");
+    return res.redirect("/dashboard");
+  }
 };

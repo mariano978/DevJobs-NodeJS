@@ -4,6 +4,8 @@ const Usuario = require("../models/Usuario.js");
 const passport = require("passport");
 const Vacante = require("../models/Vacante.js");
 
+const crypto = require("crypto");
+
 const { cloneObject } = require("../helpers/functions.js");
 
 //Para manejar archivos con node
@@ -11,6 +13,7 @@ const fs = require("fs");
 const path = require("path");
 //Configurando Multer para subir el avatar
 const multer = require("multer");
+const { sendEmailResetPassword } = require("../handlers/email.js");
 const uploadAvatar = multer({
   limits: {
     fileSize: 1000000, //1Mb
@@ -38,7 +41,7 @@ exports.uploadAvatar = (req, res, next) => {
     if (err) {
       if (err instanceof multer.MulterError) {
         if (err.code === "LIMIT_FILE_SIZE") {
-          req.flash("error", "Imagen muy pesada. Máx. 100Kb");
+          req.flash("error", "Imagen muy pesada. Máx. 1Mb");
         } else {
           req.flash(
             "error",
@@ -314,4 +317,46 @@ exports.logoutFromUser = (req, res) => {
     req.flash("success", "Se ha cerrado sesion");
     res.redirect("/login");
   });
+};
+
+exports.formResetPassword = (req, res) => {
+  res.render("usuarios/auth/reset-password", {
+    nombrePagina: "Recupera tu contraseña",
+    tagline: "Coloca tu email para cambiar la contraseña",
+    mensajes: req.flash(),
+  });
+};
+
+exports.sendEmailToken = async (req, res) => {
+  if (!req.body.email) {
+    req.flash("error", "Ingresar el email");
+    return res.redirect("/reset-password");
+  }
+
+  const usuario = await Usuario.findOne({ email: req.body.email });
+  if (!usuario) {
+    req.flash("error", "El email no existe");
+    return res.redirect("/reset-password");
+  }
+
+  //Enviar Mail
+  usuario.token = crypto.randomBytes(20).toString("hex");
+  usuario.expira = Date.now() + 3600000; //
+
+  try {
+    await usuario.save();
+
+    const resetUrl = `http://${req.headers.host}/reset-password/${usuario.token}`;
+
+    const seEnvio = await sendEmailResetPassword(usuario.email, resetUrl);
+    if (seEnvio) {
+      req.flash("success", "Revisa tu email");
+    } else {
+      req.flash("error", "No se pudo enviar el email, intenta mas tarde");
+    }
+  } catch (error) {
+    console.log(error);
+    req.flash("error", "Lo siento ha ocurrido un error, intente mas tarde");
+  }
+  return res.redirect("/reset-password");
 };

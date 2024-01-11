@@ -24,7 +24,10 @@
       {{{vacante.descripcion}}}
     </div>
 
-    <a class="btn btn-azul" href="/vacantes/editar/{{vacante.url}}">Editar vacante</a>
+    {{#if editarVacante}}
+      <a class="btn btn-azul" href="/vacantes/editar/{{vacante.url}}">Editar
+        vacante</a>
+    {{/if}}
   </main>
   <aside class="sidebar">
     <h2>Conocimientos deseados</h2>
@@ -34,4 +37,45 @@
       {{/each}}
     </ul>
   </aside>
+</div>
+
+<div class="contenedor datos-reclutador">
+  <div class="enviar-datos">
+    <h2>Contactar Reclutador</h2>
+    <p>LLena el siguiente formulario y sube tu curriculum</p>
+    <form
+      action="/vacantes/{{vacante.url}}"
+      method="POST"
+      enctype="multipart/form-data"
+      class="default-form"
+    >
+      <div class="campo">
+        <label for="nombre">Nombre</label>
+        <input type="text" name="nombre" id="nombre" placeholder="Tu nombre" />
+      </div>
+      <div class="campo">
+        <label for="email">Email</label>
+        <input type="email" name="email" id="email" placeholder="Tu email" />
+      </div>
+      <div class="campo">
+        <label>CV (PDF)</label>
+        <input type="file" name="cv" />
+      </div>
+      <div class="campo">
+        <input type="submit" value="Enviar" class="btn btn-verde" />
+      </div>
+    </form>
+  </div>
+  <div class="info-reclutador">
+    <h2>Información Reclutador</h2>
+    {{#if vacante.usuario_id.nombre}}
+      <p>{{vacante.usuario_id.nombre}}</p>
+    {{/if}}
+    {{#if vacante.usuario_id.avatar}}
+      <img
+        src="/uploads/avatars/{{vacante.usuario_id.avatar}}"
+        alt="avatarReclutador"
+      />
+    {{/if}}
+  </div>
 </div>
